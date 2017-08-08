@@ -162,8 +162,8 @@ rf.close()
 # covert dict into sorted lists....
 hostlist = sorted(hostlist.items(), key=lambda t: t[1])
 devlist = sorted(devlist.items(), key=lambda t: t[1])
-acthosts = idmap.viewkeys()
-
+#acthosts = idmap.viewkeys()
+acthosts = idmap.keys()
 out2 = ""
 if len(sys.argv) > 1:  # print out the lists only
 	out = "timestamp"
@@ -209,4 +209,5 @@ else:
 
 	if os.path.isfile("fw_success"):
 		os.remove("fw_success")
-print out + out2
+out=out+out2
+print (out)

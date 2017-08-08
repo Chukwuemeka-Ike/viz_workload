@@ -42,7 +42,7 @@ def main(raw_fn):
     with open(routefile, 'w') as fid:
         fid.write(blobs.pop(0))
         fid.flush()
-    header = subprocess.getoutput('python parse_pcie_init.py 1')
+    header = subprocess.getoutput('python3 parse_pcie_init.py 1')
     header = 'datetime,' + header
     lines = [header]
     for blob in blobs:
@@ -54,7 +54,7 @@ def main(raw_fn):
         with open(loadingfile, 'w') as fid:
             fid.write(blob[idx:].strip())
             fid.flush()
-        blob = subprocess.getoutput('python parse_pcie_init.py')
+        blob = subprocess.getoutput('python3 parse_pcie_init.py')
         # now write line after prepending timestamp
         line = '{},{}'.format(timestamp, blob)
         lines.append(line)
