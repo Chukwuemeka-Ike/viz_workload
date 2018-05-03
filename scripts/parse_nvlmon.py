@@ -147,7 +147,7 @@ def parse_raw_gpu(raw_fn):
                     nvl_str[i] += "," + str(float(d2h) / 1024 / 1024 / etime)
                     curidx = NVLIDX + 12
                 elif topology == 844:  # power8/4gpu, supported, 0,2 p2p recv; 1,3 p2p send; 4,6 h2d; 5,7 d2h, this mapping may be incorrect
-                    if i == 0 || i ==2: # gpu 0, 2
+                    if i == 0 or i ==2: # gpu 0, 2
                         p2p_recv=long(item[NVLIDX]) + long(item[NVLIDX + 2])
                         p2p_send=long(item[NVLIDX+1]) + long(item[NVLIDX + 3])
                         h2d=long(item[NVLIDX+4]) + long(item[NVLIDX + 6])
