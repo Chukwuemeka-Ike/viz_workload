@@ -192,6 +192,12 @@ def main():
                 details[meas_type] = create_chartdata(summary['run_id'],
                                                       meas_type,
                                                       summary['hosts'])
+        elif meas_type == 'nvlmon':
+             for suffix in ['nvl0', 'nvl1', 'nvl2', 'nvl3']: #'avg', 'pow', 'gpu', 'mem', 'membw', 'temp',
+                meas_type = 'nvlmon.' + suffix
+                details[meas_type] = create_chartdata(summary['run_id'],
+                                                      meas_type,
+                                                      summary['hosts'])
         else:
             details[meas_type] = create_chartdata(summary['run_id'],
                                                   meas_type, summary['hosts'])

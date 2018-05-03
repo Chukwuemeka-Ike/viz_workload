@@ -44,6 +44,26 @@
     "monitor": "gpu",
     "type": "heatmap"
   },
+  "nvlmon.nvl0": {
+    "title": "GPU0 Interconnection Usage [MB/s]",
+    "monitor": "nvlmon",
+    "type": "timeseries"
+  },
+  "nvlmon.nvl1": {
+    "title": "GPU1 Interconnection Usage [MB/s]",
+    "monitor": "nvlmon",
+    "type": "timeseries"
+  },
+  "nvlmon.nvl2": {
+    "title": "GPU2 Interconnection Usage [MB/s]",
+    "monitor": "nvlmon",
+    "type": "timeseries"
+  },
+  "nvlmon.nvl3": {
+    "title": "GPU3 Interconnection Usage [MB/s]",
+    "monitor": "nvlmon",
+    "type": "timeseries"
+  },  
   "pcie.ing_util":{
     "monitor": "pcie",
     "title": "PCIE Host Utilization In [%]",
