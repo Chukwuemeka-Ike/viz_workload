@@ -81,6 +81,8 @@ def parse_raw_gpu(raw_fn):
         int_str[i] = '0'
     len0 = 0
 
+    prevtime=0
+
     while lines:
         line = lines.pop(0)
         try:
@@ -141,26 +143,20 @@ def parse_raw_gpu(raw_fn):
                     p2p_send=long(item[NVLIDX+1]) + long(item[NVLIDX + 5]) + long(item[NVLIDX+9])
                     h2d=long(item[NVLIDX+2]) + long(item[NVLIDX + 6]) + long(item[NVLIDX+10])
                     d2h=long(item[NVLIDX+3]) + long(item[NVLIDX + 7]) + long(item[NVLIDX+11])
-                    nvl_str[i] += "," + str(float(p2p_recv) / 1024 / 1024 / etime)
-                    nvl_str[i] += "," + str(float(p2p_send) / 1024 / 1024 / etime)
-                    nvl_str[i] += "," + str(float(h2d) / 1024 / 1024 / etime)
-                    nvl_str[i] += "," + str(float(d2h) / 1024 / 1024 / etime)
+                    nvl_str[i] += "," + str(float(p2p_recv) / 1024 / 1024 / (etime-prevtime))
+                    nvl_str[i] += "," + str(float(p2p_send) / 1024 / 1024 / (etime-prevtime))
+                    nvl_str[i] += "," + str(float(h2d) / 1024 / 1024 / (etime-prevtime))
+                    nvl_str[i] += "," + str(float(d2h) / 1024 / 1024 / (etime-prevtime))
                     curidx = NVLIDX + 12
-                elif topology == 844:  # power8/4gpu, supported, 0,2 p2p recv; 1,3 p2p send; 4,6 h2d; 5,7 d2h, this mapping may be incorrect
-                    if i == 0 or i ==2: # gpu 0, 2
-                        p2p_recv=long(item[NVLIDX]) + long(item[NVLIDX + 2])
-                        p2p_send=long(item[NVLIDX+1]) + long(item[NVLIDX + 3])
-                        h2d=long(item[NVLIDX+4]) + long(item[NVLIDX + 6])
-                        d2h=long(item[NVLIDX+5]) + long(item[NVLIDX + 7])
-                    else: # gpu 1, 3
-                        p2p_recv=long(item[NVLIDX+4]) + long(item[NVLIDX + 6])
-                        p2p_send=long(item[NVLIDX+5]) + long(item[NVLIDX + 7])
-                        h2d=long(item[NVLIDX]) + long(item[NVLIDX + 2])
-                        d2h=long(item[NVLIDX+1]) + long(item[NVLIDX + 3])
-                    nvl_str[i] += "," + str(float(p2p_recv) / 1024 / 1024 / etime)
-                    nvl_str[i] += "," + str(float(p2p_send) / 1024 / 1024 / etime)
-                    nvl_str[i] += "," + str(float(h2d) / 1024 / 1024 / etime)
-                    nvl_str[i] += "," + str(float(d2h) / 1024 / 1024/ etime)
+                elif topology == 844:  # power8/4gpu, supported, 0,2 p2p recv; 1,3 p2p send; 4,6 h2d; 5,7 d2h, this mapping is incorrect, FIXIT
+                    p2p_recv=long(item[NVLIDX]) + long(item[NVLIDX + 2])
+                    p2p_send=long(item[NVLIDX+1]) + long(item[NVLIDX + 3])
+                    h2d=long(item[NVLIDX+4]) + long(item[NVLIDX + 6])
+                    d2h=long(item[NVLIDX+5]) + long(item[NVLIDX + 7])
+                    nvl_str[i] += "," + str(float(p2p_recv) / 1024 / 1024 / (etime-prevtime))
+                    nvl_str[i] += "," + str(float(p2p_send) / 1024 / 1024 / (etime-prevtime))
+                    nvl_str[i] += "," + str(float(h2d) / 1024 / 1024 / (etime-prevtime))
+                    nvl_str[i] += "," + str(float(d2h) / 1024 / 1024/ (etime-prevtime))
                     curidx = NVLIDX + 8
                 else: # something have nvlink but does not power8/9?, did not test yet.
                     for r in range(int(item[curidx+8])):  # get nvlinks, should be equal to num_nvlink
@@ -168,6 +164,7 @@ def parse_raw_gpu(raw_fn):
                     print ("Warning: Unknown topology")
                     curidx = NVLIDX + int(item[curidx + 9]) + 1
                 int_str[i] = int_str[i] + pcie_str[i] + nvl_str[i]
+            prevtime = etime
         except Exception as err:
             print(str(err))
             print(err.args)
@@ -181,7 +178,11 @@ def main(raw_fn):
     '''
     num_gpu, topology, gpu_str, membw_str, mem_str, pow_str, temp_str, pcie_str, nvl_str, int_str = parse_raw_gpu(raw_fn)
     # Often the last set of data is incomplete. Clean the csv records
+#    gpu_str = validate(gpu_str)
+#    mem_str = validate(mem_str)
+#    pow_str = validate(pow_str)
     ext = ['.gpu', '.mem', '.pow','.membw', '.temp']
+#    num_gpu = len(gpu_str.split('\n')[0].split(',')) - 1
     header = 'time_sec,' + ','.join(['gpu' + str(i) for i in range(num_gpu)])
     header += '\n'
     # Save data for all individual gpu traces
