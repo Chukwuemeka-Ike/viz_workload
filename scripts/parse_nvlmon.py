@@ -109,6 +109,8 @@ def parse_raw_gpu(raw_fn):
                 if len0 <> len(item):
                     break # skip incomplete data
                 etime = long(time) - long(time0)
+                if etime - prevtime == 0:
+                    etime = prevtime + 1
                 gpu_str += '\n' + str(etime)
                 membw_str += '\n' + str(etime)
                 mem_str += '\n'+ str(etime)
