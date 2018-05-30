@@ -62,9 +62,10 @@ def parse_raw_gpu(raw_fn):
     while lines:
         line = lines.pop(0)
         try:
-            (time, idx, _, util_gpu, util_mem, power_gpu) = line.split(',')
+            (time, idx, _, util_gpu, util_mem, power_gpu,used_mem,total_mem) = line.split(',')
             util_gpu = util_gpu.strip().split()[0]
-            util_mem = util_mem.strip().split()[0]
+            # util_mem = util_mem.strip().split()[0]
+            util_mem = str( round(float(used_mem.strip().split()[0]) / float(total_mem.strip().split()[0])*100))
             power_gpu = power_gpu.strip().split()[0]
             time = datetime.strptime(time, '%Y/%m/%d %H:%M:%S.%f')
             if not time0:

@@ -23,7 +23,7 @@ mkdir -p $DIRNAME
 rm -f $TARGET_FN
 
 nvidia-smi \
-    --query-gpu=timestamp,index,name,utilization.gpu,utilization.memory,power.draw \
+    --query-gpu=timestamp,index,name,utilization.gpu,utilization.memory,power.draw,memory.used,memory.total \
     --format=csv --loop=$DELAY_SEC > $TARGET_FN &
 PID=$!
 
