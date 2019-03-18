@@ -39,21 +39,36 @@ def main(raw_fn):
     host_util_igr_fn = base_fn + '.host_util_igr.csv'
     host_util_egr_fn = base_fn + '.host_util_egr.csv'
     
+    # get the routing table ready
     with open(routefile, 'w') as fid:
         fid.write(blobs.pop(0))
         fid.flush()
+
+    # get the first data entry ready
+    blob = blobs.pop(0)
+    idx = blob.index('\n')
+    timestamp = blob[:idx].strip()        
+    with open(loadingfile, 'w') as fid:
+        fid.write(blob[idx:].strip())
+        fid.flush()
+    skipOnce = True
+    
+    # get the headline
     header = subprocess.getoutput('python3 parse_pcie_init.py 1')
     header = 'datetime,' + header
     lines = [header]
     for blob in blobs:
         # strip measurement from file and write to 'loadingsample.txt'
         # then run parse_pcie_init.py
-        idx = blob.index('\n')
-        timestamp = blob[:idx].strip()
+        if skipOnce:
+            skipOnce = False
+        else:
+            idx = blob.index('\n')
+            timestamp = blob[:idx].strip()
 
-        with open(loadingfile, 'w') as fid:
-            fid.write(blob[idx:].strip())
-            fid.flush()
+            with open(loadingfile, 'w') as fid:
+                fid.write(blob[idx:].strip())
+                fid.flush()
         blob = subprocess.getoutput('python3 parse_pcie_init.py')
         # now write line after prepending timestamp
         line = '{},{}'.format(timestamp, blob)
